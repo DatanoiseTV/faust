@@ -28,7 +28,7 @@
 #include "exception.hh"
 #include "garbageable.hh"
 
-//#include "global.hh"
+// #include "global.hh"
 
 #include "interval/interval_def.hh"
 
@@ -36,7 +36,7 @@
 
 extern itv::interval_algebra gAlgebra;
 
-//#include "global.hh"
+// #include "global.hh"
 
 #ifdef _WIN32
 inline double log2(double e)
@@ -69,6 +69,11 @@ inline double max4(double a, double b, double c, double d)
 // extern global* gGlobal;
 
 using interval = itv::interval;
+
+inline interval cast2int(const interval& x)
+{
+    return gAlgebra.Int(x);
+}
 
 inline interval operator+(const interval& x, const interval& y)
 {

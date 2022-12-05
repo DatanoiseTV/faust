@@ -269,9 +269,8 @@ class SimpleType : public AudioType {
 
 inline Type intCast(Type t)
 {
-    interval I = t->getInterval();
-    interval cI = interval(std::isinf(I.lo()) ? I.lo() : int(I.lo()), std::isinf(I.hi()) ? I.hi() : int(I.hi()));
-    return makeSimpleType(kInt, t->variability(), t->computability(), t->vectorability(), t->boolean(), cI);
+    return makeSimpleType(kInt, t->variability(), t->computability(), t->vectorability(), t->boolean(),
+                          cast2int(t->getInterval()));
 }
 inline Type floatCast(Type t)
 {
@@ -348,11 +347,8 @@ class TableType : public AudioType {
     }  ///< construct a TableType with a content of a type t, promoting nature, variability, computability and
        ///< vectorability
 
-    Type content() const
-    {
-        return fContent;
-    }                                            ///< return the type of data store in the table
-    virtual ostream& print(ostream& dst) const;  ///< print a TableType
+    Type             content() const { return fContent; }  ///< return the type of data store in the table
+    virtual ostream& print(ostream& dst) const;            ///< print a TableType
 
     virtual AudioType* promoteNature(int n)
     {

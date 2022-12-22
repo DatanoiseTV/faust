@@ -3,7 +3,7 @@ project (faust)
 
 #######################################
 # versions management
-set (VERSION 2.54.7)
+set (VERSION 2.55.0)
 macro (get_major_minor_patch version)
 	string( REGEX REPLACE "([0-9]*)\\.([0-9]*)\\.([0-9]*)" "\\1"  VERSION_MAJOR ${version} )
 	string( REGEX REPLACE "([0-9]*)\\.([0-9]*)\\.([0-9]*)" "\\2"  VERSION_MINOR ${version} )
@@ -105,7 +105,7 @@ endif()
 	set (FAUST_DEFINITIONS ${FAUST_DEFINITIONS} -DLLVM_VERSION="${LLVM_PACKAGE_VERSION}")
 
 	if("${LLVM_PACKAGE_VERSION}" VERSION_GREATER_EQUAL 10)
-        set (CMAKE_CXX_STANDARD 14)
+        set (CMAKE_CXX_STANDARD 17)
 	endif()
 endif()
 
@@ -167,6 +167,10 @@ if (INCLUDE_EXECUTABLE)
 	target_compile_definitions (faust PRIVATE ${FAUST_DEFINITIONS})
 	target_include_directories (faust PRIVATE ${FAUST_INC} ${LLVM_INC})
 	target_link_libraries (faust PRIVATE ${FAUST_LIBS})
+	if (WIN32)
+		# To fix error C2872: 'byte': ambiguous symbol (see https://developercommunity.visualstudio.com/t/error-c2872-byte-ambiguous-symbol/93889)
+		target_compile_definitions (faust PRIVATE _HAS_STD_BYTE=0)
+	endif()
 	scan_backends (faust COMPILER)
 	set_target_properties(faust PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BINDIR})
 	set_target_properties(faust PROPERTIES COMPILE_FLAGS -DFAUST_EXE)
@@ -184,6 +188,10 @@ if (INCLUDE_STATIC)
 		LIBRARY_OUTPUT_DIRECTORY ${LIBDIR}
 		ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${LIBDIR}
 		LIBRARY_OUTPUT_DIRECTORY_RELEASE ${LIBDIR})
+	if (WIN32)
+		# To fix error C2872: 'byte': ambiguous symbol (see https://developercommunity.visualstudio.com/t/error-c2872-byte-ambiguous-symbol/93889)
+		target_compile_definitions (staticlib PRIVATE _HAS_STD_BYTE=0)
+	endif()
 	if (MSVC)
 		set_target_properties(staticlib PROPERTIES OUTPUT_NAME libfaust)
 	elseif (IOS)
@@ -221,6 +229,8 @@ if (INCLUDE_DYNAMIC)
 			ARCHIVE_OUTPUT_DIRECTORY ${LIBDIR}
 			RUNTIME_OUTPUT_DIRECTORY ${LIBDIR})
 		set_target_properties(dynamiclib PROPERTIES OUTPUT_NAME faust)
+		# To fix error C2872: 'byte': ambiguous symbol (see https://developercommunity.visualstudio.com/t/error-c2872-byte-ambiguous-symbol/93889)
+		target_compile_definitions (dynamiclib PRIVATE _HAS_STD_BYTE=0)
 		target_sources (faust PRIVATE ${ROOT}/windows/faust.rc)
 		target_sources (dynamiclib PRIVATE ${ROOT}/windows/faustdll.rc)
 	else()
@@ -319,7 +329,6 @@ install (
     OPTIONAL
 )
 endif()
-
 
 
 ####################################

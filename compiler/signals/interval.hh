@@ -52,7 +52,7 @@ using interval = itv::interval;
 
 inline interval cast2int(const interval& x)
 {
-    return gAlgebra.Int(x);
+    return gAlgebra.IntCast(x);
 }
 
 inline interval operator+(const interval& x, const interval& y)
@@ -161,7 +161,7 @@ inline interval pow(const interval& x, const interval& y)
 
 inline interval iint(const interval& x)
 {
-    return gAlgebra.Int(x);
+    return gAlgebra.IntCast(x);
 }
 
 inline interval fmod(const interval& x, const interval& y)
